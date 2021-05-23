@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: mind-map
+    networks:
+      testvln:
+        aliases:
+          - mongo
+    volumes:
+      - /Users/fomathi/projects/mind-map-webservice-api/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+networks:
+  testvln:
+    driver: bridge

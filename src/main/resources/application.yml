@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: Mind Map Api
+  data:
+    mongodb:
+      authentication-database: admin
+      uri: mongodb://${mongodb.username}:${mongodb.password}@${mongodb.hosts}/${mongodb.database}?ssl=${mongodb.ssl}&connectTimeoutMS=${mongodb.connectTimeoutMS}&minPoolSize=${mongodb.minPoolSize}&maxPoolSize=${mongodb.maxPoolSize}&maxIdleTimeMS=${mongodb.maxIdleTimeMS}
+      auto-index-creation: true
+
+mongodb:
+  hosts:
+  database: mind-map
+  username:
+  password:
+  ssl: false
+  connectTimeoutMS: 3000
+  minPoolSize: 0
+  maxPoolSize: 16
+  maxIdleTimeMS: 90000
+

@@ -1,6 +1,21 @@
 version: "3.7"
 
 services:
+  mind-map:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_HOSTS: mongo:27017
+      MONGODB_DATABASE: mind-map
+      MONGODB_USERNAME: user-test
+      MONGODB_PASSWORD: test-password
+      MONGODB_SSL: "false"
+    networks:
+      testvln:
+        aliases:
+          - mind-map
+
   mongo:
     image: mongo
     ports:
@@ -14,8 +29,7 @@ services:
         aliases:
           - mongo
     volumes:
-      - /Users/fomathi/projects/mind-map-webservice-api/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 networks:
   testvln:
     driver: bridge

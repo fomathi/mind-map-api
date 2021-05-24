@@ -35,7 +35,7 @@ public class Node {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Node node = (Node) o;
-        return Objects.equals(name, node.name) && Objects.equals(parentPath, node.parentPath);
+        return name.equals(node.name) && parentPath.equals(node.parentPath);
     }
 
     @Override

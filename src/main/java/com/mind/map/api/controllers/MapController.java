@@ -39,7 +39,7 @@ public class MapController {
     }
 
     @GetMapping("/{map}/pretty")
-    public ResponseEntity printMap(@PathVariable final String map) {
+    public ResponseEntity<String> printMap(@PathVariable final String map) {
         return ResponseEntity.ok().body(service.printMap(map));
     }
 

@@ -1,7 +1,9 @@
 package com.mind.map.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mind.map.api.domain.AddLeafResponse;
 import com.mind.map.api.domain.CreateMapRequest;
+import com.mind.map.api.domain.Leaf;
 import com.mind.map.api.domain.Map;
 import com.mind.map.api.domain.NodeResponse;
 import com.mind.map.api.domain.ReadMapResponse;
@@ -22,8 +24,8 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -134,6 +136,75 @@ class MapControllerTest {
             mockMvc.perform(get("/map/my-map/pretty")
                     .contentType("application/json"))
                     .andExpect(status().is4xxClientError());
+        }
+    }
+
+    @Nested
+    @DisplayName("Given an AddLeaf CMD")
+    class AddLeaf {
+        @Test
+        @DisplayName("Happy path")
+        void testAddLeafHappyPath() throws Exception {
+            Leaf request = Leaf.builder()
+                    .path("i/like/fruits")
+                    .text("text text")
+                    .build();
+            AddLeafResponse response = AddLeafResponse.builder()
+                                        .id("e7bfca6d-6067-46f9-bdfb-0aca01fa6476")
+                                        .build();
+            when(service.addLeaf(any(String.class), any(Leaf.class))).thenReturn(response);
+            mockMvc.perform(post("/map/my-map/leaf")
+                    .content(mapper.writeValueAsString(request))
+                    .contentType("application/json"))
+                    .andExpect(status().is2xxSuccessful())
+                    .andExpect(jsonPath("$.id").value("e7bfca6d-6067-46f9-bdfb-0aca01fa6476"));
+        }
+
+        @Test
+        @DisplayName("Case Unexpected error happened")
+        void testAddLeafUnexpected() throws Exception {
+            Leaf request = Leaf.builder()
+                    .path("i/like/fruits")
+                    .text("text text")
+                    .build();
+
+            when(service.addLeaf(any(String.class), any(Leaf.class))).thenThrow(NullPointerException.class);
+            mockMvc.perform(post("/map/my-map/leaf")
+                    .content(mapper.writeValueAsString(request))
+                    .contentType("application/json"))
+                    .andExpect(status().is5xxServerError());
+        }
+    }
+
+    @Nested
+    @DisplayName("Given a ReadLeaf CMD")
+    class ReadLeaf {
+        @Test
+        @DisplayName("Happy path")
+        void testReadLeafCaseHappyPath() throws Exception {
+            Leaf leaf =  Leaf.builder()
+                    .path("i/love/fruits")
+                    .text("text text")
+                    .build();
+            when(service.readLeaf(any(String.class), any(String.class))).thenReturn(leaf);
+
+            mockMvc.perform(get("/map/my-map/leaf/e7bfca6d-6067-46f9-bdfb-0aca01fa6476")
+                    .contentType("application/json"))
+                    .andExpect(status().is2xxSuccessful())
+                    .andExpect(jsonPath("$.path").value("i/love/fruits"))
+                    .andExpect(jsonPath("$.text").value("text text"));
+            ;
+        }
+
+        @Test
+        @DisplayName("Case map doesn't exit, then thrown NotFoundException")
+        void testReadLeafCaseMapDoNotExis() throws Exception {
+            when(service.readLeaf(any(String.class), any(String.class))).thenThrow(NotFoundException.class);
+
+            mockMvc.perform(get("/map/my-map/leaf/e7bfca6d-6067-46f9-bdfb-0aca01fa6476")
+                    .contentType("application/json"))
+                    .andExpect(status().is4xxClientError())
+            ;
         }
     }
 

@@ -5,6 +5,7 @@ services:
     build: .
     ports:
       - "8080:8080"
+      - "8888:8888"
     environment:
       MONGODB_HOSTS: mongo:27017
       MONGODB_DATABASE: mind-map

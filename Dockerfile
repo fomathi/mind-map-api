@@ -12,6 +12,7 @@ WORKDIR /home/${USER}/
 COPY ./target/mind-map-*.jar ./service.jar
 
 EXPOSE 8080
+EXPOSE 8888
 
 USER ${USER}
 
